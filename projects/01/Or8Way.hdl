@@ -1,0 +1,39 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/1/Or8Way.hdl
+/**
+ * 8-way Or gate: 
+ * out = in[0] Or in[1] Or ... Or in[7]
+ */
+CHIP Or8Way {
+    IN in[8];
+    OUT out;
+
+    PARTS:
+
+    Nand(a= in[0], b= in[0], out= NOTin0);
+    Nand(a= in[1], b= in[1], out= NOTin1);
+    Nand(a= in[2], b= in[2], out= NOTin2);
+    Nand(a= in[3], b= in[3], out= NOTin3);
+    Nand(a= in[4], b= in[4], out= NOTin4);
+    Nand(a= in[5], b= in[5], out= NOTin5);
+    Nand(a= in[6], b= in[6], out= NOTin6);
+    Nand(a= in[7], b= in[7], out= NOTin7);
+
+    Nand(a= NOTin0, b= NOTin1, out= inORinPrev);
+    Nand(a= inORinPrev, b= inORinPrev, out= NOTinORinPrev);
+    Nand(a= NOTin1, b= NOTinORinPrev, out= in1RinPrev);
+    Nand(a= in1RinPrev, b= in1RinPrev, out= NOTin1RinPrev);
+    Nand(a= NOTin2, b= NOTin1RinPrev, out= in2RinPrev);
+    Nand(a= in2RinPrev, b= in2RinPrev, out= NOTin2RinPrev);
+    Nand(a= NOTin3, b= NOTin2RinPrev, out= in3RinPrev);
+    Nand(a= in3RinPrev, b= in3RinPrev, out= NOTin3RinPrev);
+    Nand(a= NOTin4, b= NOTin3RinPrev, out= in4RinPrev);
+    Nand(a= in4RinPrev, b= in4RinPrev, out= NOTin4RinPrev);
+    Nand(a= NOTin5, b= NOTin4RinPrev, out= in5RinPrev);
+    Nand(a= in5RinPrev, b= in5RinPrev, out= NOTin5RinPrev);
+    Nand(a= NOTin6, b= NOTin5RinPrev, out= in6RinPrev);
+    Nand(a= in6RinPrev, b= in6RinPrev, out= NOTin6RinPrev);
+    Nand(a= NOTin7, b= NOTin6RinPrev, out= out);
+}

@@ -1,0 +1,61 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/1/Mux8Way16.hdl
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel = 000
+ *       b if sel = 001
+ *       c if sel = 010
+ *       d if sel = 011
+ *       e if sel = 100
+ *       f if sel = 101
+ *       g if sel = 110
+ *       h if sel = 111
+ */
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+     // Invert selection lines
+    Nand(a= sel[0], b= sel[0], out= NOTsel0);
+    Nand(a= sel[1], b= sel[1], out= NOTsel1);
+    Nand(a= sel[1], b= sel[1], out= NOTsel2);
+    
+    // 1st bit
+   
+    Nand(a= NOTsel0, b= a[0], out= NANDNOTsel0a0);
+    Nand(a= sel[0], b= b[0], out= NANDsel0b0);
+    Nand(a= NANDNOTsel0a0, b= NANDsel0b0, out= mul1bit0);
+
+    Nand(a= NOTsel0, b= c[0], out= NANDNOTsel0c0);
+    Nand(a= sel[0], b= d[0], out= NANDsel0d0);
+    Nand(a= NANDNOTsel0c0, b= NANDsel0d0, out= mul2bit0);
+
+    Nand(a= NOTsel1, b= mul1bit0, out= NANDNOTsel1ab0);
+    Nand(a= sel[1], b= mul2bit0, out= NANDsel0cd0);
+    Nand(a= NANDNOTsel1ab0, b= NANDsel0cd0, out= wmul1bit0);
+
+    Nand(a= NOTsel0, b= e[0], out= NANDNOTsel0e0);
+    Nand(a= sel[0], b= f[0], out= NANDsel0f0);
+    Nand(a= NANDNOTsel0a0, b= NANDsel0b0, out= mul3bit0);
+
+    Nand(a= NOTsel0, b= g[0], out= NANDNOTsel0g0);
+    Nand(a= sel[0], b= h[0], out= NANDsel0h0);
+    Nand(a= NANDNOTsel0c0, b= NANDsel0d0, out= mul4bit0);
+
+    Nand(a= NOTsel1, b= mul1bit0, out= NANDNOTsel1ef0);
+    Nand(a= sel[1], b= mul2bit0, out= NANDsel0gh0);
+    Nand(a= NANDNOTsel1ef0, b= NANDsel0gh0, out= wmul2bit0);
+    
+    Nand(a= NOTsel2, b= wmul1bit0, out= NANDNOTsel1abcd0);
+    Nand(a= sel[2], b= wmul2bit0, out= NANDsel0efgh0);
+    Nand(a= NANDNOTsel1ef0, b= NANDsel0gh0, out= out[0]);
+
+
+
+
+}

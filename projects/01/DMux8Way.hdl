@@ -1,0 +1,90 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/1/DMux8Way.hdl
+/**
+ * 8-way demultiplexor:
+ * [a, b, c, d, e, f, g, h] = [in, 0,  0,  0,  0,  0,  0,  0] if sel = 000
+ *                            [0, in,  0,  0,  0,  0,  0,  0] if sel = 001
+ *                            [0,  0, in,  0,  0,  0,  0,  0] if sel = 010
+ *                            [0,  0,  0, in,  0,  0,  0,  0] if sel = 011
+ *                            [0,  0,  0,  0, in,  0,  0,  0] if sel = 100
+ *                            [0,  0,  0,  0,  0, in,  0,  0] if sel = 101
+ *                            [0,  0,  0,  0,  0,  0, in,  0] if sel = 110
+ *                            [0,  0,  0,  0,  0,  0,  0, in] if sel = 111
+ */
+CHIP DMux8Way {
+    IN in, sel[3];
+    OUT a, b, c, d, e, f, g, h;
+
+    PARTS:
+    // Invert selection lines
+    Nand(a= sel[0], b= sel[0], out= NOTsel0);
+    Nand(a= sel[1], b= sel[1], out= NOTsel1);
+    Nand(a= sel[2], b= sel[2], out= NOTsel2);
+
+    //a
+    Nand(a= in, b= NOTsel0, out= NANDinNOTsel0);
+    Nand(a= NOTsel1, b= NOTsel2, out= NANDsel1sel2);
+    Nand(a= NANDinNOTsel0, b= NANDinNOTsel0, out= ANDinNOTsel0);
+    Nand(a= NANDsel1sel2, b= NANDsel1sel2, out= ANDsel1sel2);
+    Nand(a= ANDinNOTsel0, b= ANDsel1sel2, out= NOTa);
+    Nand(a= NOTa, b= NOTa, out= a);
+
+      // b: selected if sel = 001
+    Nand(a= in, b= sel[0], out= NANDinSel0);
+    Nand(a= NOTsel1, b= NOTsel2, out= NANDsel1sel2b);
+    Nand(a= NANDinSel0, b= NANDinSel0, out= ANDinSel0);
+    Nand(a= NANDsel1sel2b, b= NANDsel1sel2b, out= ANDsel1sel2b);
+    Nand(a= ANDinSel0, b= ANDsel1sel2b, out= NOTb);
+    Nand(a= NOTb, b= NOTb, out= b);
+
+    // c: selected if sel = 010
+    Nand(a= in, b= NOTsel0, out= NANDinNOTsel0c);
+    Nand(a= sel[1], b= NOTsel2, out= NANDsel1NOTsel2c);
+    Nand(a= NANDinNOTsel0c, b= NANDinNOTsel0c, out= ANDinNOTsel0c);
+    Nand(a= NANDsel1NOTsel2c, b= NANDsel1NOTsel2c, out= ANDsel1NOTsel2c);
+    Nand(a= ANDinNOTsel0c, b= ANDsel1NOTsel2c, out= NOTc);
+    Nand(a= NOTc, b= NOTc, out= c);
+
+    // d: selected if sel = 011
+    Nand(a= in, b= sel[0], out= NANDinSel0d);
+    Nand(a= sel[1], b= NOTsel2, out= NANDsel1NOTsel2d);
+    Nand(a= NANDinSel0d, b= NANDinSel0d, out= ANDinSel0d);
+    Nand(a= NANDsel1NOTsel2d, b= NANDsel1NOTsel2d, out= ANDsel1NOTsel2d);
+    Nand(a= ANDinSel0d, b= ANDsel1NOTsel2d, out= NOTd);
+    Nand(a= NOTd, b= NOTd, out= d);
+
+    // e: selected if sel = 100
+    Nand(a= in, b= NOTsel0, out= NANDinNOTsel0e);
+    Nand(a= NOTsel1, b= sel[2], out= NANDsel1sel2e);
+    Nand(a= NANDinNOTsel0e, b= NANDinNOTsel0e, out= ANDinNOTsel0e);
+    Nand(a= NANDsel1sel2e, b= NANDsel1sel2e, out= ANDsel1sel2e);
+    Nand(a= ANDinNOTsel0e, b= ANDsel1sel2e, out= NOTe);
+    Nand(a= NOTe, b= NOTe, out= e);
+
+    // f: selected if sel = 101
+    Nand(a= in, b= sel[0], out= NANDinSel0f);
+    Nand(a= NOTsel1, b= sel[2], out= NANDsel1sel2f);
+    Nand(a= NANDinSel0f, b= NANDinSel0f, out= ANDinSel0f);
+    Nand(a= NANDsel1sel2f, b= NANDsel1sel2f, out= ANDsel1sel2f);
+    Nand(a= ANDinSel0f, b= ANDsel1sel2f, out= NOTf);
+    Nand(a= NOTf, b= NOTf, out= f);
+
+    // g: selected if sel = 110
+    Nand(a= in, b= NOTsel0, out= NANDinNOTsel0g);
+    Nand(a= sel[1], b= sel[2], out= NANDsel1sel2g);
+    Nand(a= NANDinNOTsel0g, b= NANDinNOTsel0g, out= ANDinNOTsel0g);
+    Nand(a= NANDsel1sel2g, b= NANDsel1sel2g, out= ANDsel1sel2g);
+    Nand(a= ANDinNOTsel0g, b= ANDsel1sel2g, out= NOTg);
+    Nand(a= NOTg, b= NOTg, out= g);
+
+    // h: selected if sel = 111
+    Nand(a= in, b= sel[0], out= NANDinSel0h);
+    Nand(a= sel[1], b= sel[2], out= NANDsel1sel2h);
+    Nand(a= NANDinSel0h, b= NANDinSel0h, out= ANDinSel0h);
+    Nand(a= NANDsel1sel2h, b= NANDsel1sel2h, out= ANDsel1sel2h);
+    Nand(a= ANDinSel0h, b= ANDsel1sel2h, out= NOTh);
+    Nand(a= NOTh, b= NOTh, out= h);
+    
+}

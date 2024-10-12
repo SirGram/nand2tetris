@@ -1,0 +1,44 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/1/DMux4Way.hdl
+/**
+ * 4-way demultiplexor:
+ * [a, b, c, d] = [in, 0, 0, 0] if sel = 00
+ *                [0, in, 0, 0] if sel = 01
+ *                [0, 0, in, 0] if sel = 10
+ *                [0, 0, 0, in] if sel = 11
+ */
+CHIP DMux4Way {
+    IN in, sel[2];
+    OUT a, b, c, d;
+
+    PARTS:
+    Nand(a= sel[0], b= sel[0], out= NOTsel0);
+    Nand(a= sel[1], b= sel[1], out= NOTsel1);
+
+    // Routing input 'in' to output 'a'
+    Nand(a= in, b= NOTsel0, out= NANDinNOTsel0);
+    Nand(a= NANDinNOTsel0, b= NANDinNOTsel0, out= ANDinNOTsel0);
+    Nand(a= ANDinNOTsel0, b= NOTsel1, out= NANDa);
+    Nand(a= NANDa, b= NANDa, out= a); 
+
+    // Routing input 'in' to output 'b'
+    Nand(a= in, b= NOTsel1, out= NANDinNOTsel1);
+    Nand(a= NANDinNOTsel1, b= NANDinNOTsel1, out= ANDinNOTsel1);
+    Nand(a= ANDinNOTsel1, b= NOTsel0, out= NANDb);
+    Nand(a= NANDb, b= NANDb, out= b); 
+
+    // Routing input 'in' to output 'c'
+    Nand(a= in, b= sel[0], out= NANDinSel0);
+    Nand(a= NANDinSel0, b= NANDinSel0, out= ANDinSel0);
+    Nand(a= ANDinSel0, b= NOTsel1, out= NANDc);
+    Nand(a= NANDc, b= NANDc, out= c); 
+
+    // Routing input 'in' to output 'd'
+    Nand(a= in, b= sel[1], out= NANDinSel1);
+    Nand(a= NANDinSel1, b= NANDinSel1, out= ANDinSel1);
+    Nand(a= ANDinSel1, b= sel[0], out= NANDd);
+    Nand(a= NANDd, b= NANDd, out= d); 
+    
+}
