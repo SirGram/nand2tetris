@@ -1,0 +1,45 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/2/Inc16.hdl
+/**
+ * 16-bit incrementer:
+ * out = in + 1
+ */
+CHIP Inc16 {
+    IN in[16];
+    OUT out[16];
+
+    PARTS:
+    // lsb
+    Nand(a= in[0], b= in[0], out= out[0]);
+    
+    // bit 1
+    Nand(a= in[0], b= in[0], out= NOTc0);
+    Nand(a= in[1], b= in[1], out= NOTi1);
+    Nand(a= NOTc0, b= in[1], out= NANDNOTc0in1);
+    Nand(a= NOTc0, b= NOTc0, out= c0);
+    Nand(a= c0, b= NOTi1, out= NANDc0NOTi1);
+    Nand(a= NANDc0NOTi1, b= NANDNOTc0in1, out= out[1]);
+    Nand(a= c0, b= in[1], out= NOTc1);
+    Nand(a= NOTc1, b= NOTc1, out= c1);
+
+    // bit 2
+    Nand(a= in[2], b= in[2], out= NOTi2);
+    Nand(a= NOTc1, b= in[2], out= NANDNOTc1in2);
+    Nand(a= c1, b= NOTi2, out= NANDc1NOTi2);
+    Nand(a= NANDc1NOTi2, b= NANDNOTc1in2, out= out[2]);
+    Nand(a= c1, b= in[2], out= NOTc2);
+    Nand(a= NOTc2, b= NOTc2, out= c2);
+
+    // bit 3
+    Nand(a= in[3], b= in[3], out= NOTi3);
+    Nand(a= NOTc2, b= in[3], out= NANDNOTc2in3);
+    Nand(a= c2, b= NOTi3, out= NANDc2NOTi3);
+    Nand(a= NANDc2NOTi3, b= NANDNOTc2in3, out= out[3]);
+    Nand(a= c2, b= in[3], out= NOTc3);
+    Nand(a= NOTc3, b= NOTc3, out= c3);
+
+    
+    
+}

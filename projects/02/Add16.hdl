@@ -1,0 +1,337 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/2/Add16.hdl
+/**
+ * 16-bit adder: Adds two 16-bit two's complement values.
+ * The most significant carry bit is ignored.
+ */// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/2/Add16.hdl
+
+/**
+ * 16-bit adder: Adds two 16-bit two's complement values.
+ * The most significant carry bit is ignored.
+ */
+CHIP Add16 {
+    IN a[16], b[16];  // 16-bit inputs
+    OUT out[16];      // 16-bit output
+
+    PARTS:
+    //--- Bit 0 (LSB) ---
+    Nand(a= a[0], b= a[0], out= NOTa0);
+    Nand(a= b[0], b= b[0], out= NOTb0);
+    Nand(a= NOTa0, b= b[0], out= NANDNOTab0);
+    Nand(a= a[0], b= NOTb0, out= NANDaNOTb0);
+    Nand(a= NANDNOTab0, b= NANDaNOTb0, out= out[0]);  // Sum for bit 0
+    Nand(a= a[0], b= b[0], out= NOTcarry0);
+    Nand(a= NOTcarry0, b= NOTcarry0, out= carry0);    // Carry out from bit 0
+
+    //--- Bit 1 ---
+    Nand(a= a[1], b= a[1], out= NOTa1);
+    Nand(a= b[1], b= b[1], out= NOTb1);
+    Nand(a= a[1], b= NOTb1, out= NANDaNOTb1);
+    Nand(a= NOTa1, b= b[1], out= NANDNOTab1);
+    Nand(a= NANDaNOTb1, b= NANDNOTab1, out= sumab1);  // XOR(a[1], b[1])
+    Nand(a= sumab1, b= sumab1, out= NOTsumab1);
+    Nand(a= sumab1, b= NOTcarry0, out= NANDsumabNOTcarry0);
+    Nand(a= NOTsumab1, b= carry0, out= NANDNOTsumabcarry0);
+    Nand(a= NANDsumabNOTcarry0, b= NANDNOTsumabcarry0, out= out[1]);  // Sum for bit 1
+    Nand(a= a[1], b= b[1], out= NANDab1);
+    Nand(a= NANDab1, b= NANDab1, out= ANDab1);
+    Nand(a= a[1], b= carry0, out= NANDa1carry0);
+    Nand(a= NANDa1carry0, b= NANDa1carry0, out= ANDa1carry0);
+    Nand(a= carry0, b= b[1], out= NANDb1carry0);
+    Nand(a= NANDb1carry0, b= NANDb1carry0, out= ANDb1carry0);
+    Nand(a= NANDab1, b= NANDa1carry0, out= abORac1);
+    Nand(a= abORac1, b= abORac1, out= NOTabORac1);
+    Nand(a= NOTabORac1, b= NANDb1carry0, out= carry1);  // Carry out from bit 1
+
+    //--- Bit 2 ---
+    Nand(a= a[2], b= a[2], out= NOTa2);
+    Nand(a= b[2], b= b[2], out= NOTb2);
+    Nand(a= a[2], b= NOTb2, out= NANDaNOTb2);
+    Nand(a= NOTa2, b= b[2], out= NANDNOTab2);
+    Nand(a= NANDaNOTb2, b= NANDNOTab2, out= sumab2);  // XOR(a[2], b[2])
+    Nand(a= sumab2, b= sumab2, out= NOTsumab2);
+    Nand(a= carry1, b= carry1, out= NOTcarry1);
+    Nand(a= sumab2, b= NOTcarry1, out= NANDsumabNOTcarry1);
+    Nand(a= NOTsumab2, b= carry1, out= NANDNOTsumabcarry1);
+    Nand(a= NANDsumabNOTcarry1, b= NANDNOTsumabcarry1, out= out[2]);  // Sum for bit 2
+    Nand(a= a[2], b= b[2], out= NANDab2);
+    Nand(a= NANDab2, b= NANDab2, out= ANDab2);
+    Nand(a= a[2], b= carry1, out= NANDa2carry1);
+    Nand(a= NANDa2carry1, b= NANDa2carry1, out= ANDa2carry1);
+    Nand(a= carry1, b= b[2], out= NANDb2carry1);
+    Nand(a= NANDb2carry1, b= NANDb2carry1, out= ANDb2carry1);
+    Nand(a= NANDab2, b= NANDa2carry1, out= abORac2);
+    Nand(a= abORac2, b= abORac2, out= NOTabORac2);
+    Nand(a= NOTabORac2, b= NANDb2carry1, out= carry2);  // Carry out from bit 2
+
+    //--- Bit 3 ---
+    Nand(a= a[3], b= a[3], out= NOTa3);
+    Nand(a= b[3], b= b[3], out= NOTb3);
+    Nand(a= a[3], b= NOTb3, out= NANDaNOTb3);
+    Nand(a= NOTa3, b= b[3], out= NANDNOTab3);
+    Nand(a= NANDaNOTb3, b= NANDNOTab3, out= sumab3);  // XOR(a[3], b[3])
+    Nand(a= sumab3, b= sumab3, out= NOTsumab3);    
+    Nand(a= carry2, b= carry2, out= NOTcarry2);
+    Nand(a= sumab3, b= NOTcarry2, out= NANDsumabNOTcarry2);
+    Nand(a= NOTsumab3, b= carry2, out= NANDNOTsumabcarry2);
+    Nand(a= NANDsumabNOTcarry2, b= NANDNOTsumabcarry2, out= out[3]);  // Sum for bit 3
+    Nand(a= a[3], b= b[3], out= NANDab3);
+    Nand(a= NANDab3, b= NANDab3, out= ANDab3);
+    Nand(a= a[3], b= carry2, out= NANDa3carry2);
+    Nand(a= NANDa3carry2, b= NANDa3carry2, out= ANDa3carry2);
+    Nand(a= carry2, b= b[3], out= NANDb3carry2);
+    Nand(a= NANDb3carry2, b= NANDb3carry2, out= ANDb3carry2);
+    Nand(a= NANDab3, b= NANDa3carry2, out= abORac3);
+    Nand(a= abORac3, b= abORac3, out= NOTabORac3);
+    Nand(a= NOTabORac3, b= NANDb3carry2, out= carry3);  // Carry out from bit 3
+
+    //--- Bit 4 ---
+    Nand(a= a[4], b= a[4], out= NOTa4);
+    Nand(a= b[4], b= b[4], out= NOTb4);
+    Nand(a= a[4], b= NOTb4, out= NANDaNOTb4);
+    Nand(a= NOTa4, b= b[4], out= NANDNOTab4);
+    Nand(a= NANDaNOTb4, b= NANDNOTab4, out= sumab4);  // XOR(a[4], b[4])
+    Nand(a= sumab4, b= sumab4, out= NOTsumab4);
+    Nand(a= carry3, b= carry3, out= NOTcarry3);
+    Nand(a= sumab4, b= NOTcarry3, out= NANDsumabNOTcarry3);
+    Nand(a= NOTsumab4, b= carry3, out= NANDNOTsumabcarry3);
+    Nand(a= NANDsumabNOTcarry3, b= NANDNOTsumabcarry3, out= out[4]);  // Sum for bit 4
+    Nand(a= a[4], b= b[4], out= NANDab4);
+    Nand(a= NANDab4, b= NANDab4, out= ANDab4);
+    Nand(a= a[4], b= carry3, out= NANDa4carry3);
+    Nand(a= NANDa4carry3, b= NANDa4carry3, out= ANDa4carry3);
+      Nand(a= carry3, b= b[4], out= NANDb4carry3);
+    Nand(a= NANDb4carry3, b= NANDb4carry3, out= ANDb4carry3);
+    Nand(a= NANDab4, b= NANDa4carry3, out= abORac4);
+    Nand(a= abORac4, b= abORac4, out= NOTabORac4);
+    Nand(a= NOTabORac4, b= NANDb4carry3, out= carry4);  // Carry out from bit 4
+
+    //--- Bit 5 ---
+    Nand(a= a[5], b= a[5], out= NOTa5);
+    Nand(a= b[5], b= b[5], out= NOTb5);
+    Nand(a= a[5], b= NOTb5, out= NANDaNOTb5);
+    Nand(a= NOTa5, b= b[5], out= NANDNOTab5);
+    Nand(a= NANDaNOTb5, b= NANDNOTab5, out= sumab5);  // XOR(a[5], b[5])
+    Nand(a= sumab5, b= sumab5, out= NOTsumab5);
+    Nand(a= carry4, b= carry4, out= NOTcarry4);
+    Nand(a= sumab5, b= NOTcarry4, out= NANDsumabNOTcarry4);
+    Nand(a= NOTsumab5, b= carry4, out= NANDNOTsumabcarry4);
+    Nand(a= NANDsumabNOTcarry4, b= NANDNOTsumabcarry4, out= out[5]);  // Sum for bit 5
+    Nand(a= a[5], b= b[5], out= NANDab5);
+    Nand(a= NANDab5, b= NANDab5, out= ANDab5);
+    Nand(a= a[5], b= carry4, out= NANDa5carry4);
+    Nand(a= NANDa5carry4, b= NANDa5carry4, out= ANDa5carry4);
+    Nand(a= carry4, b= b[5], out= NANDb5carry4);
+    Nand(a= NANDb5carry4, b= NANDb5carry4, out= ANDb5carry4);
+    Nand(a= NANDab5, b= NANDa5carry4, out= abORac5);
+    Nand(a= abORac5, b= abORac5, out= NOTabORac5);
+    Nand(a= NOTabORac5, b= NANDb5carry4, out= carry5);  // Carry out from bit 5
+
+    //--- Bit 6 ---
+    Nand(a= a[6], b= a[6], out= NOTa6);
+    Nand(a= b[6], b= b[6], out= NOTb6);
+    Nand(a= a[6], b= NOTb6, out= NANDaNOTb6);
+    Nand(a= NOTa6, b= b[6], out= NANDNOTab6);
+    Nand(a= NANDaNOTb6, b= NANDNOTab6, out= sumab6);  // XOR(a[6], b[6])
+    Nand(a= sumab6, b= sumab6, out= NOTsumab6);
+    Nand(a= carry5, b= carry5, out= NOTcarry5);
+    Nand(a= sumab6, b= NOTcarry5, out= NANDsumabNOTcarry5);
+    Nand(a= NOTsumab6, b= carry5, out= NANDNOTsumabcarry5);
+    Nand(a= NANDsumabNOTcarry5, b= NANDNOTsumabcarry5, out= out[6]);  // Sum for bit 6
+    Nand(a= a[6], b= b[6], out= NANDab6);
+    Nand(a= NANDab6, b= NANDab6, out= ANDab6);
+    Nand(a= a[6], b= carry5, out= NANDa6carry5);
+    Nand(a= NANDa6carry5, b= NANDa6carry5, out= ANDa6carry5);
+    Nand(a= carry5, b= b[6], out= NANDb6carry5);
+    Nand(a= NANDb6carry5, b= NANDb6carry5, out= ANDb6carry5);
+    Nand(a= NANDab6, b= NANDa6carry5, out= abORac6);
+    Nand(a= abORac6, b= abORac6, out= NOTabORac6);
+    Nand(a= NOTabORac6, b= NANDb6carry5, out= carry6);  // Carry out from bit 6
+
+    //--- Bit 7 ---
+    Nand(a= a[7], b= a[7], out= NOTa7);
+    Nand(a= b[7], b= b[7], out= NOTb7);
+    Nand(a= a[7], b= NOTb7, out= NANDaNOTb7);
+    Nand(a= NOTa7, b= b[7], out= NANDNOTab7);
+    Nand(a= NANDaNOTb7, b= NANDNOTab7, out= sumab7);  // XOR(a[7], b[7])
+    Nand(a= sumab7, b= sumab7, out= NOTsumab7);
+    Nand(a= carry6, b= carry6, out= NOTcarry6);
+    Nand(a= sumab7, b= NOTcarry6, out= NANDsumabNOTcarry6);
+    Nand(a= NOTsumab7, b= carry6, out= NANDNOTsumabcarry6);
+    Nand(a= NANDsumabNOTcarry6, b= NANDNOTsumabcarry6, out= out[7]);  // Sum for bit 7
+    Nand(a= a[7], b= b[7], out= NANDab7);
+    Nand(a= NANDab7, b= NANDab7, out= ANDab7);
+    Nand(a= a[7], b= carry6, out= NANDa7carry6);
+    Nand(a= NANDa7carry6, b= NANDa7carry6, out= ANDa7carry6);
+    Nand(a= carry6, b= b[7], out= NANDb7carry6);
+    Nand(a= NANDb7carry6, b= NANDb7carry6, out= ANDb7carry6);
+    Nand(a= NANDab7, b= NANDa7carry6, out= abORac7);
+    Nand(a= abORac7, b= abORac7, out= NOTabORac7);
+    Nand(a= NOTabORac7, b= NANDb7carry6, out= carry7);  // Carry out from bit 7
+
+    //--- Bit 8 ---
+    Nand(a= a[8], b= a[8], out= NOTa8);
+    Nand(a= b[8], b= b[8], out= NOTb8);
+    Nand(a= a[8], b= NOTb8, out= NANDaNOTb8);
+    Nand(a= NOTa8, b= b[8], out= NANDNOTab8);
+    Nand(a= NANDaNOTb8, b= NANDNOTab8, out= sumab8);  // XOR(a[8], b[8])
+    Nand(a= sumab8, b= sumab8, out= NOTsumab8);
+    Nand(a= carry7, b= carry7, out= NOTcarry7);
+    Nand(a= sumab8, b= NOTcarry7, out= NANDsumabNOTcarry7);
+    Nand(a= NOTsumab8, b= carry7, out= NANDNOTsumabcarry7);
+    Nand(a= NANDsumabNOTcarry7, b= NANDNOTsumabcarry7, out= out[8]);  // Sum for bit 8
+    Nand(a= a[8], b= b[8], out= NANDab8);
+    Nand(a= NANDab8, b= NANDab8, out= ANDab8);
+    Nand(a= a[8], b= carry7, out= NANDa8carry7);
+    Nand(a= NANDa8carry7, b= NANDa8carry7, out= ANDa8carry7);
+    Nand(a= carry7, b= b[8], out= NANDb8carry7);
+    Nand(a= NANDb8carry7, b= NANDb8carry7, out= ANDb8carry7);
+    Nand(a= NANDab8, b= NANDa8carry7, out= abORac8);
+    Nand(a= abORac8, b= abORac8, out= NOTabORac8);
+    Nand(a= NOTabORac8, b= NANDb8carry7, out= carry8);  // Carry out from bit 8
+
+    //--- Bit 9 ---
+    Nand(a= a[9], b= a[9], out= NOTa9);
+    Nand(a= b[9], b= b[9], out= NOTb9);
+    Nand(a= a[9], b= NOTb9, out= NANDaNOTb9);
+    Nand(a= NOTa9, b= b[9], out= NANDNOTab9);
+    Nand(a= NANDaNOTb9, b= NANDNOTab9, out= sumab9);  // XOR(a[9], b[9])
+    Nand(a= sumab9, b= sumab9, out= NOTsumab9);
+    Nand(a= carry8, b= carry8, out= NOTcarry8);
+    Nand(a= sumab9, b= NOTcarry8, out= NANDsumabNOTcarry8);
+    Nand(a= NOTsumab9, b= carry8, out= NANDNOTsumabcarry8);
+    Nand(a= NANDsumabNOTcarry8, b= NANDNOTsumabcarry8, out= out[9]);  // Sum for bit 9
+    Nand(a= a[9], b= b[9], out= NANDab9);
+    Nand(a= NANDab9, b= NANDab9, out= ANDab9);
+    Nand(a= a[9], b= carry8, out= NANDa9carry8);
+    Nand(a= NANDa9carry8, b= NANDa9carry8, out= ANDa9carry8);
+    Nand(a= carry8, b= b[9], out= NANDb9carry8);
+    Nand(a= NANDb9carry8, b= NANDb9carry8, out= ANDb9carry8);
+    Nand(a= NANDab9, b= NANDa9carry8, out= abORac9);
+    Nand(a= abORac9, b= abORac9, out= NOTabORac9);
+    Nand(a= NOTabORac9, b= NANDb9carry8, out= carry9);  // Carry out from bit 9
+
+    //--- Bit 10 ---
+    Nand(a= a[10], b= a[10], out= NOTa10);
+    Nand(a= b[10], b= b[10], out= NOTb10);
+    Nand(a= a[10], b= NOTb10, out= NANDaNOTb10);
+    Nand(a= NOTa10, b= b[10], out= NANDNOTab10);
+    Nand(a= NANDaNOTb10, b= NANDNOTab10, out= sumab10);  // XOR(a[10], b[10])
+    Nand(a= sumab10, b= sumab10, out= NOTsumab10);
+    Nand(a= carry9, b= carry9, out= NOTcarry9);
+    Nand(a= sumab10, b= NOTcarry9, out= NANDsumabNOTcarry9);
+    Nand(a= NOTsumab10, b= carry9, out= NANDNOTsumabcarry9);
+    Nand(a= NANDsumabNOTcarry9, b= NANDNOTsumabcarry9, out= out[10]);  // Sum for bit 10
+    Nand(a= a[10], b= b[10], out= NANDab10);
+    Nand(a= NANDab10, b= NANDab10, out= ANDab10);
+    Nand(a= a[10], b= carry9, out= NANDa10carry9);
+    Nand(a= NANDa10carry9, b= NANDa10carry9, out= ANDa10carry9);
+    Nand(a= carry9, b= b[10], out= NANDb10carry9);
+    Nand(a= NANDb10carry9, b= NANDb10carry9, out= ANDb10carry9);
+    Nand(a= NANDab10, b= NANDa10carry9, out= abORac10);
+    Nand(a= abORac10, b= abORac10, out= NOTabORac10);
+    Nand(a= NOTabORac10, b= NANDb10carry9, out= carry10);  // Carry out from bit 10
+
+    //--- Bit 11 ---
+    Nand(a= a[11], b= a[11], out= NOTa11);
+    Nand(a= b[11], b= b[11], out= NOTb11);
+    Nand(a= a[11], b= NOTb11, out= NANDaNOTb11);
+    Nand(a= NOTa11, b= b[11], out= NANDNOTab11);
+    Nand(a= NANDaNOTb11, b= NANDNOTab11, out= sumab11);  // XOR(a[11], b[11])
+    Nand(a= sumab11, b= sumab11, out= NOTsumab11);
+    Nand(a= carry10, b= carry10, out= NOTcarry10);
+    Nand(a= sumab11, b= NOTcarry10, out= NANDsumabNOTcarry10);
+    Nand(a= NOTsumab11, b= carry10, out= NANDNOTsumabcarry10);
+    Nand(a= NANDsumabNOTcarry10, b= NANDNOTsumabcarry10, out= out[11]);  // Sum for bit 11
+    Nand(a= a[11], b= b[11], out= NANDab11);
+    Nand(a= NANDab11, b= NANDab11, out= ANDab11);
+    Nand(a= a[11], b= carry10, out= NANDa11carry10);
+    Nand(a= NANDa11carry10, b= NANDa11carry10, out= ANDa11carry10);
+    Nand(a= carry10, b= b[11], out= NANDb11carry10);
+    Nand(a= NANDb11carry10, b= NANDb11carry10, out= ANDb11carry10);
+    Nand(a= NANDab11, b= NANDa11carry10, out= abORac11);
+    Nand(a= abORac11, b= abORac11, out= NOTabORac11);
+    Nand(a= NOTabORac11, b= NANDb11carry10, out= carry11);  // Carry out from bit 11
+
+    //--- Bit 12 ---
+    Nand(a= a[12], b= a[12], out= NOTa12);
+    Nand(a= b[12], b= b[12], out= NOTb12);
+    Nand(a= a[12], b= NOTb12, out= NANDaNOTb12);
+    Nand(a= NOTa12, b= b[12], out= NANDNOTab12);
+    Nand(a= NANDaNOTb12, b= NANDNOTab12, out= sumab12);  // XOR(a[12], b[12])
+    Nand(a= sumab12, b= sumab12, out= NOTsumab12);
+    Nand(a= carry11, b= carry11, out= NOTcarry11);
+    Nand(a= sumab12, b= NOTcarry11, out= NANDsumabNOTcarry11);
+    Nand(a= NOTsumab12, b= carry11, out= NANDNOTsumabcarry11);
+    Nand(a= NANDsumabNOTcarry11, b= NANDNOTsumabcarry11, out= out[12]);  // Sum for bit 12
+    Nand(a= a[12], b= b[12], out= NANDab12);
+    Nand(a= NANDab12, b= NANDab12, out= ANDab12);
+    Nand(a= a[12], b= carry11, out= NANDa12carry11);
+    Nand(a= NANDa12carry11, b= NANDa12carry11, out= ANDa12carry11);
+    Nand(a= carry11, b= b[12], out= NANDb12carry11);
+    Nand(a= NANDb12carry11, b= NANDb12carry11, out= ANDb12carry11);
+    Nand(a= NANDab12, b= NANDa12carry11, out= abORac12);
+    Nand(a= abORac12, b= abORac12, out= NOTabORac12);
+    Nand(a= NOTabORac12, b= NANDb12carry11, out= carry12);  // Carry out from bit 12
+
+    //--- Bit 13 ---
+    Nand(a= a[13], b= a[13], out= NOTa13);
+    Nand(a= b[13], b= b[13], out= NOTb13);
+    Nand(a= a[13], b= NOTb13, out= NANDaNOTb13);
+    Nand(a= NOTa13, b= b[13], out= NANDNOTab13);
+    Nand(a= NANDaNOTb13, b= NANDNOTab13, out= sumab13);  // XOR(a[13], b[13])
+    Nand(a= sumab13, b= sumab13, out= NOTsumab13);
+    Nand(a= carry12, b= carry12, out= NOTcarry12);
+    Nand(a= sumab13, b= NOTcarry12, out= NANDsumabNOTcarry12);
+    Nand(a= NOTsumab13, b= carry12, out= NANDNOTsumabcarry12);
+    Nand(a= NANDsumabNOTcarry12, b= NANDNOTsumabcarry12, out= out[13]);  // Sum for bit 13
+    Nand(a= a[13], b= b[13], out= NANDab13);
+    Nand(a= NANDab13, b= NANDab13, out= ANDab13);
+    Nand(a= a[13], b= carry12, out= NANDa13carry12);
+    Nand(a= NANDa13carry12, b= NANDa13carry12, out= ANDa13carry12);
+    Nand(a= carry12, b= b[13], out= NANDb13carry12);
+    Nand(a= NANDb13carry12, b= NANDb13carry12, out= ANDb13carry12);
+    Nand(a= NANDab13, b= NANDa13carry12, out= abORac13);
+    Nand(a= abORac13, b= abORac13, out= NOTabORac13);
+    Nand(a= NOTabORac13, b= NANDb13carry12, out= carry13);  // Carry out from bit 13
+
+    //--- Bit 14 ---
+    Nand(a= a[14], b= a[14], out= NOTa14);
+    Nand(a= b[14], b= b[14], out= NOTb14);
+    Nand(a= a[14], b= NOTb14, out= NANDaNOTb14);
+    Nand(a= NOTa14, b= b[14], out= NANDNOTab14);
+    Nand(a= NANDaNOTb14, b= NANDNOTab14, out= sumab14);  // XOR(a[14], b[14])
+    Nand(a= sumab14, b= sumab14, out= NOTsumab14);
+    Nand(a= carry13, b= carry13, out= NOTcarry13);
+    Nand(a= sumab14, b= NOTcarry13, out= NANDsumabNOTcarry13);
+    Nand(a= NOTsumab14, b= carry13, out= NANDNOTsumabcarry13);
+    Nand(a= NANDsumabNOTcarry13, b= NANDNOTsumabcarry13, out= out[14]);  // Sum for bit 14
+    Nand(a= a[14], b= b[14], out= NANDab14);
+    Nand(a= NANDab14, b= NANDab14, out= ANDab14);
+    Nand(a= a[14], b= carry13, out= NANDa14carry13);
+    Nand(a= NANDa14carry13, b= NANDa14carry13, out= ANDa14carry13);
+    Nand(a= carry13, b= b[14], out= NANDb14carry13);
+    Nand(a= NANDb14carry13, b= NANDb14carry13, out= ANDb14carry13);
+    Nand(a= NANDab14, b= NANDa14carry13, out= abORac14);
+    Nand(a= abORac14, b= abORac14, out= NOTabORac14);
+    Nand(a= NOTabORac14, b= NANDb14carry13, out= carry14);  // Carry out from bit 14
+
+    //--- Bit 15 ---
+    Nand(a= a[15], b= a[15], out= NOTa15);
+    Nand(a= b[15], b= b[15], out= NOTb15);
+    Nand(a= a[15], b= NOTb15, out= NANDaNOTb15);
+    Nand(a= NOTa15, b= b[15], out= NANDNOTab15);
+    Nand(a= NANDaNOTb15, b= NANDNOTab15, out= sumab15);  // XOR(a[15], b[15])
+    Nand(a= sumab15, b= sumab15, out= NOTsumab15);
+    Nand(a= carry14, b= carry14, out= NOTcarry14);
+    Nand(a= sumab15, b= NOTcarry14, out= NANDsumabNOTcarry14);
+    Nand(a= NOTsumab15, b= carry14, out= NANDNOTsumabcarry14);
+    Nand(a= NANDsumabNOTcarry14, b= NANDNOTsumabcarry14, out= out[15]);  // Sum for bit 15
+
+}
+
