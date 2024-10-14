@@ -1,0 +1,79 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/3/a/Register.hdl
+/**
+ * 16-bit register:
+ * If load is asserted, the register's value is set to in;
+ * Otherwise, the register maintains its current value:
+ * if (load(t)) out(t+1) = int(t), else out(t+1) = out(t)
+ */
+CHIP Register {
+    IN in[16], load;
+    OUT out[16];
+
+    PARTS:
+     // Bit 0
+    Mux(a= dffout0, b= in[0], sel= load, out= muxout0);
+    DFF(in= muxout0, out= out[0], out= dffout0);
+
+    // Bit 1
+    Mux(a= dffout1, b= in[1], sel= load, out= muxout1);
+    DFF(in= muxout1, out= out[1], out= dffout1);
+
+    // Bit 2
+    Mux(a= dffout2, b= in[2], sel= load, out= muxout2);
+    DFF(in= muxout2, out= out[2], out= dffout2);
+
+    // Bit 3
+    Mux(a= dffout3, b= in[3], sel= load, out= muxout3);
+    DFF(in= muxout3, out= out[3], out= dffout3);
+
+    // Bit 4
+    Mux(a= dffout4, b= in[4], sel= load, out= muxout4);
+    DFF(in= muxout4, out= out[4], out= dffout4);
+
+    // Bit 5
+    Mux(a= dffout5, b= in[5], sel= load, out= muxout5);
+    DFF(in= muxout5, out= out[5], out= dffout5);
+
+    // Bit 6
+    Mux(a= dffout6, b= in[6], sel= load, out= muxout6);
+    DFF(in= muxout6, out= out[6], out= dffout6);
+
+    // Bit 7
+    Mux(a= dffout7, b= in[7], sel= load, out= muxout7);
+    DFF(in= muxout7, out= out[7], out= dffout7);
+
+    // Bit 8
+    Mux(a= dffout8, b= in[8], sel= load, out= muxout8);
+    DFF(in= muxout8, out= out[8], out= dffout8);
+
+    // Bit 9
+    Mux(a= dffout9, b= in[9], sel= load, out= muxout9);
+    DFF(in= muxout9, out= out[9], out= dffout9);
+
+    // Bit 10
+    Mux(a= dffout10, b= in[10], sel= load, out= muxout10);
+    DFF(in= muxout10, out= out[10], out= dffout10);
+
+    // Bit 11
+    Mux(a= dffout11, b= in[11], sel= load, out= muxout11);
+    DFF(in= muxout11, out= out[11], out= dffout11);
+
+    // Bit 12
+    Mux(a= dffout12, b= in[12], sel= load, out= muxout12);
+    DFF(in= muxout12, out= out[12], out= dffout12);
+
+    // Bit 13
+    Mux(a= dffout13, b= in[13], sel= load, out= muxout13);
+    DFF(in= muxout13, out= out[13], out= dffout13);
+
+    // Bit 14
+    Mux(a= dffout14, b= in[14], sel= load, out= muxout14);
+    DFF(in= muxout14, out= out[14], out= dffout14);
+
+    // Bit 15
+    Mux(a= dffout15, b= in[15], sel= load, out= muxout15);
+    DFF(in= muxout15, out= out[15], out= dffout15);
+}
