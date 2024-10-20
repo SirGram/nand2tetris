@@ -1,0 +1,44 @@
+CHIP CPU {
+    IN  inM[16],         // M value input (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current program
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+    PARTS:
+    // Instruction type
+    Not(in=instruction[15], out=Ainstruction);
+    
+    // A register logic
+    Mux16(a=instruction, b=ALUout, sel=instruction[15], out=Ain);
+    Not(in=Ainstruction, out=Cinstruction);
+    And(a=Cinstruction, b=instruction[5], out=ALoadFromC);
+    Or(a=Ainstruction, b=ALoadFromC, out=loadA);
+    ARegister(in=Ain, load=loadA, out=Aout, out[0..14]=addressM);
+    
+    // D register logic
+    And(a=Cinstruction, b=instruction[4], out=loadD);
+    DRegister(in=ALUout, load=loadD, out=Dout);
+    
+    // ALU setup
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=AMout);
+    ALU(x=Dout, y=AMout, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, out=outM, zr=ZRout, ng=NGout);
+    
+    // writeM
+    And(a=Cinstruction, b=instruction[3], out=writeM);
+    
+    // Jump logic
+    Not(in=NGout, out=positive);
+    Not(in=ZRout, out=nonzero);
+    And(a=positive, b=nonzero, out=positivennonzero);
+    And(a=instruction[0], b=positivennonzero, out=JGT);
+    And(a=instruction[1], b=ZRout, out=JEQ);
+    And(a=instruction[2], b=NGout, out=JLT);
+    Or(a=JEQ, b=JLT, out=JLE);
+    Or(a=JLE, b=JGT, out=jump);
+    And(a=Cinstruction, b=jump, out=PCload);
+    
+    // PC
+    PC(in=Aout, load=PCload, inc=true, reset=reset, out[0..14]=pc);
+}
