@@ -1,0 +1,56 @@
+// input.vm
+
+// Push constants onto the stack
+push constant 7
+push constant 8
+
+// Perform arithmetic operations
+add             // 7 + 8 = 15
+push constant 5
+sub             // 15 - 5 = 10
+
+// Comparison operations
+push constant 10
+push constant 15
+gt              // 10 > 15 -> false (0)
+push constant 20
+push constant 10
+lt              // 20 < 10 -> false (0)
+push constant 5
+push constant 5
+eq              // 5 == 5 -> true (-1)
+
+// Logical operations
+push constant 3
+push constant 6
+and             // 3 & 6 -> 2 (bitwise AND)
+push constant 3
+push constant 6
+or              // 3 | 6 -> 7 (bitwise OR)
+not             // ~7 -> -8 (bitwise NOT)
+
+// Work with temp segment
+push constant 2
+pop temp 0      // Store 2 in temp segment at index 0
+push constant 3
+pop temp 1      // Store 3 in temp segment at index 1
+push temp 0
+push temp 1
+add             // 2 + 3 = 5 (using values from temp segment)
+
+// Work with pointer segment (points to THIS or THAT)
+push constant 3030
+pop pointer 0   // Store 3030 in THIS
+push constant 4040
+pop pointer 1   // Store 4040 in THAT
+push pointer 0  // Push THIS (should be 3030)
+push pointer 1  // Push THAT (should be 4040)
+
+// Work with static segment
+push constant 100
+pop static 5    // Store 100 in static 5
+push constant 200
+pop static 6    // Store 200 in static 6
+push static 5   // Retrieve value from static 5 (100)
+push static 6   // Retrieve value from static 6 (200)
+add             // 100 + 200 = 300
